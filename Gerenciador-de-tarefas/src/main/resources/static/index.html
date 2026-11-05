@@ -12,7 +12,7 @@
     <link rel="stylesheet" href="responsivo.css">
 </head>
 
-<body>
+<body style="visibility:hidden">
     <div class="container">
 
         <aside class="sidebar">
@@ -51,7 +51,10 @@
                     <input type="text" id="busca" placeholder="🔍︎  Buscar tarefas...">
                 </div>
 
-                <button type="button" id="botao-tema" class="btn-tema">🌙 Modo escuro</button>
+                <div class="acoes-topo" style="display:flex;gap:8px;align-items:center;">
+                    <button type="button" id="botao-tema" class="btn-tema">🌙 Modo escuro</button>
+                    <button type="button" id="botao-sair" class="btn-tema">Sair</button>
+                </div>
             </header>
 
 
@@ -62,7 +65,7 @@
                     <path d="M 150 0 C 300 120 400 20 500 60 L 500 0 Z" fill="#15803d" opacity="0.5"></path>
                 </svg>
 
-                <h2>Olá, <span id="nome">Matheus</span><span>!</span></h2>
+                <h2>Olá, <span id="nome"></span><span>!</span></h2>
                 <p>Organize suas tarefas, mantenha o foco e conquiste seus objetivos.</p>
             </section>
 

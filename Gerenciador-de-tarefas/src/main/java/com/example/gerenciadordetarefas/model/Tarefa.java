@@ -14,6 +14,7 @@ public class Tarefa {
     private String prioridade;
     private String data;
     private boolean concluida;
+    private String usuarioId;
 
     public String getId() { return id; }
     public void setId(String id) { this.id = id; }
@@ -27,4 +28,6 @@ public class Tarefa {
     public void setData(String data) { this.data = data; }
     public boolean isConcluida() { return concluida; }
     public void setConcluida(boolean concluida) { this.concluida = concluida; }
+    public String getUsuarioId() { return usuarioId; }
+    public void setUsuarioId(String usuarioId) { this.usuarioId = usuarioId; }
 }

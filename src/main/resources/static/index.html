@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gerenciador de Tarefas</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js" defer></script>
+    <script src="script.js" defer></script>
+    <link rel="stylesheet" href="tema.css">
+    <link rel="stylesheet" href="responsivo.css">
+</head>
+
+<body style="visibility:hidden">
+    <div class="container">
+
+        <aside class="sidebar">
+            <div class="logo">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+                    stroke="#2d6a4f" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M9 11l3 3L22 4"></path>
+                    <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"></path>
+                </svg>
+                <div>
+                    <h1>TaskFlow</h1>
+                    <p>Gerenciador de Tarefas</p>
+                </div>
+            </div>
+
+            <nav aria-label="Navegação principal">
+                <ul>
+                    <li class="active"><a href="#inicio"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg><span>Início</span></a></li>
+                    <li><a href="#estatisticas"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"></line><line x1="12" y1="20" x2="12" y2="4"></line><line x1="6" y1="20" x2="6" y2="14"></line></svg><span>Estatísticas</span></a></li>
+                    <li><a href="#tarefas"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="8" y1="6" x2="21" y2="6"></line><line x1="8" y1="12" x2="21" y2="12"></line><line x1="8" y1="18" x2="21" y2="18"></line><path d="M3 6h.01M3 12h.01M3 18h.01"></path></svg><span>Minhas tarefas</span></a></li>
+                </ul>
+            </nav>
+
+            <div class="sidebar-card">
+                <div class="card-icon"><img src="img/foguete.png" alt="Foguete"></div>
+                <p>Grandes objetivos são construídos com pequenas tarefas.</p>
+                <div class="progress-bar"></div>
+            </div>
+        </aside>
+
+
+        <main class="main-content">
+
+            <header class="top-bar">
+                <div class="barra-pesquisa">
+                    <input type="text" id="busca" placeholder="🔍︎  Buscar tarefas...">
+                </div>
+
+                <div class="acoes-topo" style="display:flex;gap:8px;align-items:center;">
+                    <button type="button" id="botao-tema" class="btn-tema">🌙 Modo escuro</button>
+                    <button type="button" id="botao-sair" class="btn-tema">Sair</button>
+                </div>
+            </header>
+
+
+            <section class="welcome" id="inicio">
+                <svg class="wave-bg" viewBox="0 0 500 150" preserveAspectRatio="none">
+                    <path d="M 0 0 C 150 150 350 0 500 150 L 500 0 Z" fill="#22c55e" opacity="0.15"></path>
+                    <path d="M 0 0 C 200 100 300 0 500 80 L 500 0 Z" fill="#16a34a" opacity="0.3"></path>
+                    <path d="M 150 0 C 300 120 400 20 500 60 L 500 0 Z" fill="#15803d" opacity="0.5"></path>
+                </svg>
+
+                <h2>Olá, <span id="nome"></span><span>!</span></h2>
+                <p>Organize suas tarefas, mantenha o foco e conquiste seus objetivos.</p>
+            </section>
+
+            <section class="new-task-card">
+                <div class="card-header">
+                    <div class="icon-box">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none"
+                            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"></path>
+                            <rect x="8" y="2" width="8" height="4" rx="1" ry="1"></rect>
+                            <path d="M10.4 12.6a2 2 0 1 1 3 3L8 21l-3 1 1-3Z"></path>
+                        </svg>
+                    </div>
+                    <div>
+                        <h3>Nova Tarefa</h3>
+                        <p>Adicione uma nova tarefa à sua lista.</p>
+                    </div>
+                </div>
+
+                <form class="task-form">
+
+                    <div class="form-row">
+                        <div class="form-group flex-2">
+                            <label for="descricao">Descrição <span>*</span></label>
+                            <input type="text" id="descricao" placeholder="Ex: Estudar JavaScript..." required>
+                        </div>
+
+                        <div class="form-group flex-1">
+                            <label for="categoria">Categoria <span>*</span></label>
+                            <select id="categoria" required>
+                                <option value="" disabled selected>Selecione uma categoria</option>
+                                <option value="Pessoal">Pessoal</option>
+                                <option value="Estudos">Estudos</option>
+                                <option value="Trabalho">Trabalho</option>
+                                <option value="Outros">Outros</option>
+                            </select>
+                        </div>
+                    </div>
+
+
+                    <div class="form-row">
+                        <div class="form-group flex-1">
+                            <label for="prioridade">Prioridade <span>*</span></label>
+                            <select id="prioridade" required>
+                                <option value="" disabled selected>Selecione a prioridade</option>
+                                <option value="baixa">Baixa</option>
+                                <option value="media">Média</option>
+                                <option value="alta">Alta</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group flex-1">
+                            <label for="data">Data de conclusão <span>*</span></label>
+                            <input type="date" id="data" required>
+                        </div>
+
+
+                        <div class="form-group flex-1">
+                            <button type="submit" class="btn-add" id="button">+ Adicionar Tarefa</button>
+                        </div>
+                    </div>
+                </form>
+            </section>
+
+            <section class="cards" id="estatisticas">
+                <div class="card">
+                    <div class="board-icon-box">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+                            stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                            <line x1="10" y1="6" x2="21" y2="6"></line>
+                            <line x1="10" y1="12" x2="21" y2="12"></line>
+                            <line x1="10" y1="18" x2="21" y2="18"></line>
+                            <path d="M4 6h.01"></path>
+                            <path d="M4 12h.01"></path>
+                            <path d="M4 18h.01"></path>
+                        </svg>
+                    </div>
+                    <p>Total de tarefas</p>
+                    <span id="num-total">0</span>
+                    <div class="progress-container">
+
+                        <div id="barra-total" class="barra-fill"></div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-icon-box">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+                            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <circle cx="12" cy="12" r="10"></circle>
+                            <polyline points="12 6 12 12 16 14"></polyline>
+                        </svg>
+                    </div>
+                    <p>Pendentes</p>
+                    <span id="num-pendentes">0</span>
+                    <div class="progress-container">
+
+                        <div id="barra-pendentes" class="barra-fill"></div>
+                    </div>
+                </div>
+
+
+                <div class="card">
+                    <div class="card-icon-box">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+                            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+                            <polyline points="22 4 12 14.01 9 11.01"></polyline>
+                        </svg>
+                    </div>
+                    <p>Concluídas</p>
+                    <span id="num-concluidas">0</span>
+                    <div class="progress-container">
+
+                        <div id="barra-concluidas" class="barra-fill"></div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-icon-box">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+                            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <circle cx="12" cy="12" r="10"></circle>
+                            <line x1="12" y1="8" x2="12" y2="12"></line>
+                            <line x1="12" y1="16" x2="12.01" y2="16"></line>
+                        </svg>
+                    </div>
+                    <p>Atrasadas</p>
+                    <span id="num-atrasadas">0</span>
+                    <div class="progress-container">
+
+                        <div id="barra-atrasadas" class="barra-fill"></div>
+                    </div>
+                </div>
+
+                <div class="filtro-card">
+                    <div class="filtro-header">
+                        <div class="filtro-icon">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+                                fill="none" stroke="#2D6A4F" stroke-width="2" stroke-linecap="round"
+                                stroke-linejoin="round">
+                                <polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"></polygon>
+                            </svg>
+                        </div>
+                        <h3>Filtros</h3>
+                    </div>
+
+                    <div class="filters-form">
+                        <div class="filter-group">
+                            <label for="filter-status">Situação</label>
+                            <select id="filter-status">
+                                <option value="todas">Todas</option>
+                                <option value="pendente">Pendentes</option>
+                                <option value="concluida">Concluídas</option>
+                                <option value="atrasada">Atrasadas</option>
+                            </select>
+                        </div>
+
+                        <div class="filter-group">
+                            <label for="filter-category">Categoria</label>
+                            <select id="filter-category">
+                                <option value="todas">Todas</option>
+                                <option value="Estudos">Estudos</option>
+                                <option value="Trabalho">Trabalho</option>
+                                <option value="Pessoal">Pessoal</option>
+                                <option value="Outros">Outros</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section class="graficos">
+                <div class="graficos-grid" id="graficos-grid" hidden>
+                    <div class="grafico-card">
+                        <h3>Situação das tarefas</h3>
+                        <p>Quanto você já concluiu.</p>
+                        <div class="grafico-box">
+                            <canvas id="grafico-situacao" role="img"
+                                aria-label="Gráfico de rosca com tarefas pendentes, concluídas e atrasadas"></canvas>
+                        </div>
+                    </div>
+                    <div class="grafico-card">
+                        <h3>Tarefas por categoria</h3>
+                        <p>Onde estão as suas tarefas.</p>
+                        <div class="grafico-box">
+                            <canvas id="grafico-categoria" role="img"
+                                aria-label="Gráfico de barras com tarefas por categoria e situação"></canvas>
+                        </div>
+                    </div>
+                </div>
+                <p class="grafico-vazio" id="grafico-vazio">Adicione tarefas para ver as estatísticas.</p>
+            </section>
+
+            <section class="task-board-card" id="tarefas">
+
+                <div class="task-board-header">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+                        stroke="#2d6a4f" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+
+                        <path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"></path>
+
+                        <rect x="8" y="2" width="8" height="4" rx="1" ry="1"></rect>
+
+                        <line x1="9" y1="12" x2="15" y2="12"></line>
+                        <line x1="9" y1="16" x2="15" y2="16"></line>
+                    </svg>
+                    <div class="task-board-title">
+                        <h3>Minhas Tarefas</h3>
+                        <p>Aqui estão todas as suas tarefas.</p>
+                    </div>
+                </div>
+
+
+                <div class="task-list-empty">
+                    <div class="empty-icon">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="80" height="80" viewBox="0 0 80 80" fill="none">
+                            <circle cx="40" cy="40" r="38" stroke="#E6F4EA" stroke-width="1.5" fill="none" />
+                            <line x1="40" y1="10" x2="40" y2="13" stroke="#2D6A4F" stroke-width="2"
+                                stroke-linecap="round" />
+                            <line x1="18" y1="26" x2="23" y2="29" stroke="#2D6A4F" stroke-width="2"
+                                stroke-linecap="round" />
+                            <line x1="14" y1="40" x2="19" y2="40" stroke="#2D6A4F" stroke-width="2"
+                                stroke-linecap="round" />
+                            <line x1="18" y1="54" x2="23" y2="51" stroke="#2D6A4F" stroke-width="2"
+                                stroke-linecap="round" />
+                            <line x1="62" y1="26" x2="57" y2="29" stroke="#2D6A4F" stroke-width="2"
+                                stroke-linecap="round" />
+                            <line x1="66" y1="40" x2="61" y2="40" stroke="#2D6A4F" stroke-width="2"
+                                stroke-linecap="round" />
+                            <line x1="62" y1="54" x2="57" y2="51" stroke="#2D6A4F" stroke-width="2"
+                                stroke-linecap="round" />
+                            <rect x="29" y="22" width="22" height="28" rx="4" stroke="#2D6A4F" stroke-width="2.5"
+                                fill="#FFFFFF" />
+                            <rect x="36" y="19" width="8" height="4" rx="1" stroke="#2D6A4F" stroke-width="2"
+                                fill="#FFFFFF" />
+                            <path d="M33 30L35 32L38 29" stroke="#2D6A4F" stroke-width="2" stroke-linecap="round"
+                                stroke-linejoin="round" />
+                            <line x1="41" y1="31" x2="47" y2="31" stroke="#2D6A4F" stroke-width="2"
+                                stroke-linecap="round" />
+                            <path d="M33 39L35 41L38 38" stroke="#2D6A4F" stroke-width="2" stroke-linecap="round"
+                                stroke-linejoin="round" />
+                            <line x1="41" y1="40" x2="47" y2="40" stroke="#2D6A4F" stroke-width="2"
+                                stroke-linecap="round" />
+                        </svg>
+                    </div>
+                    <h4>Nenhuma tarefa cadastrada.</h4>
+                    <p>Adicione uma tarefa para começar!</p>
+                </div>
+            </section>
+
+
+        </main>
+    </div>
+
+
+
+
+
+
+</body>
+
+</html>

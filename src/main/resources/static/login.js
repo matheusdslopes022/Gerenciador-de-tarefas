@@ -24,8 +24,8 @@ const botaoEnviar = document.getElementById("botao-enviar");
 const botaoTrocar = document.getElementById("botao-trocar");
 const textoTrocar = document.getElementById("texto-trocar");
 
-// Para onde ir depois de entrar (troque pelo endereço do seu app)
-const PAGINA_INICIAL = "index.html";
+// Para onde ir depois de entrar
+const PAGINA_INICIAL = "/index.html";
 
 let modo = "entrar"; // "entrar" ou "cadastrar"
 
@@ -60,12 +60,12 @@ function mostrarSucesso(texto) {
     mensagem.className = "mensagem sucesso";
 }
 
-// Usuários salvos no navegador (apenas demonstração; em produção use um servidor)
-function pegarUsuarios() {
-    return JSON.parse(localStorage.getItem("usuarios") || "[]");
-}
+// Se já estiver logado, vai direto para o app
+fetch("/api/auth/me").then(function (r) {
+    if (r.ok) window.location.href = PAGINA_INICIAL;
+}).catch(function () {});
 
-form.addEventListener("submit", function (evento) {
+form.addEventListener("submit", async function (evento) {
     evento.preventDefault();
     limparErros();
 
@@ -77,23 +77,28 @@ form.addEventListener("submit", function (evento) {
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return mostrarErro(campoEmail, "Por favor, digite um e-mail válido!");
     if (senha.length < 6) return mostrarErro(campoSenha, "A senha precisa ter pelo menos 6 caracteres!");
 
-    const usuarios = pegarUsuarios();
-    const existente = usuarios.find(function (u) { return u.email === email; });
+    const url = modo === "cadastrar" ? "/api/auth/register" : "/api/auth/login";
+    const corpo = modo === "cadastrar" ? { nome: nome, email: email, senha: senha } : { email: email, senha: senha };
 
-    if (modo === "cadastrar") {
-        if (existente) return mostrarErro(campoEmail, "Este e-mail já está cadastrado!");
-        usuarios.push({ nome: nome, email: email, senha: senha });
-        localStorage.setItem("usuarios", JSON.stringify(usuarios));
-        trocarModo();
-        campoEmail.value = email;
-        mostrarSucesso("Conta criada! Agora é só entrar.");
-        return;
-    }
+    botaoEnviar.disabled = true;
+    mostrarSucesso("Aguarde...");
+    try {
+        const resposta = await fetch(url, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(corpo)
+        });
+        const dados = await resposta.json().catch(function () { return {}; });
 
-    if (!existente || existente.senha !== senha) {
-        return mostrarErro(campoSenha, "E-mail ou senha incorretos.");
+        if (!resposta.ok) {
+            const campo = resposta.status === 409 ? campoEmail : (modo === "cadastrar" ? campoEmail : campoSenha);
+            return mostrarErro(campo, dados.erro || "Não foi possível continuar.");
+        }
+        mostrarSucesso("Olá, " + dados.nome + "! Entrando...");
+        setTimeout(function () { window.location.href = PAGINA_INICIAL; }, 600);
+    } catch (erro) {
+        mostrarErro(campoEmail, "Servidor indisponível. Se for o primeiro acesso, aguarde ~1 minuto e tente de novo.");
+    } finally {
+        botaoEnviar.disabled = false;
     }
-    localStorage.setItem("usuarioLogado", existente.nome);
-    mostrarSucesso("Olá, " + existente.nome + "! Entrando...");
-    setTimeout(function () { window.location.href = PAGINA_INICIAL; }, 800);
 });

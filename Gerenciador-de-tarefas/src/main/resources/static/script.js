@@ -1,8 +1,38 @@
-const nome = prompt("Digite seu nome");
-const spanNome = document.getElementById("nome");
-spanNome.innerText = nome;
-
 const API = "/api/tarefas";
+
+// Faz a requisição; se o login expirou (401), volta para a tela de login
+async function requisicao(url, opcoes) {
+    const resposta = await fetch(url, opcoes);
+    if (resposta.status === 401) {
+        window.location.href = "/login.html";
+        return new Promise(function () {}); // não continua enquanto a página troca
+    }
+    return resposta;
+}
+
+// Confere o login, mostra o nome e libera a tela
+async function iniciar() {
+    try {
+        const r = await fetch("/api/auth/me");
+        if (r.status === 401) {
+            window.location.href = "/login.html";
+            return;
+        }
+        if (r.ok) {
+            const usuario = await r.json();
+            document.getElementById("nome").textContent = usuario.nome;
+        }
+    } catch (erro) {
+        console.error("Erro ao verificar login:", erro);
+    }
+    document.body.style.visibility = "visible";
+    carregarTarefas();
+}
+
+document.getElementById("botao-sair").addEventListener("click", async function () {
+    try { await fetch("/api/auth/logout", { method: "POST" }); } catch (e) {}
+    window.location.href = "/login.html";
+});
 let tarefas = []; 
 
 const botaoTema = document.getElementById("botao-tema");
@@ -211,7 +241,8 @@ function atualizarBarra(idDaBarra, valor, total) {
 // Busca todas as tarefas no servidor
 async function carregarTarefas() {
     try {
-        const resposta = await fetch(API);
+        const resposta = await requisicao(API);
+        if (!resposta.ok) throw new Error("Status " + resposta.status);
         tarefas = await resposta.json();
         mostrarTarefas();
     } catch (erro) {
@@ -222,7 +253,7 @@ async function carregarTarefas() {
 // Envia uma nova tarefa. Retorna true se deu certo.
 async function criarTarefa(novaTarefa) {
     try {
-        const resposta = await fetch(API, {
+        const resposta = await requisicao(API, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify(novaTarefa)
@@ -244,7 +275,7 @@ async function criarTarefa(novaTarefa) {
 // Marca a tarefa como concluída
 async function concluirTarefa(id) {
     try {
-        const resposta = await fetch(API + "/" + id, {
+        const resposta = await requisicao(API + "/" + id, {
             method: "PUT",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ concluida: true })
@@ -264,7 +295,7 @@ async function concluirTarefa(id) {
 // Apaga a tarefa
 async function excluirTarefa(id) {
     try {
-        const resposta = await fetch(API + "/" + id, { method: "DELETE" });
+        const resposta = await requisicao(API + "/" + id, { method: "DELETE" });
 
         if (!resposta.ok) {
             alert("Erro ao excluir a tarefa!");
@@ -343,8 +374,8 @@ filtroSituacao.addEventListener("change", mostrarTarefas);
 filtroCategoria.addEventListener("change", mostrarTarefas);
 campoBusca.addEventListener("input", mostrarTarefas);
 
-// Ao abrir a página, carrega as tarefas
-carregarTarefas();
+// Ao abrir a página, confere o login e carrega as tarefas
+iniciar();
 
 // ===== SIDEBAR: navegação por âncoras =====
 (function () {
