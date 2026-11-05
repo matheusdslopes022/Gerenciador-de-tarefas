@@ -1,0 +1,11 @@
+
+{
+  "hosting": {
+    "public": "Gerenciador-de-tarefas/src/main/resources/static",
+    "ignore": [
+      "firebase.json",
+      "**/.*",
+      "**/node_modules/**"
+    ]
+  }
+}
